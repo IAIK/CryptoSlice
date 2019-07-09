@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<heuristic-patterns xmlns="http://iaik.tugraz.at/CryptoSlice"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://iaik.tugraz.at/Cryptoslice schema/heuristic-patterns.xsd">
+
+  <!--
+  METHOD_DECLARATION:
+  Searches for a pattern in all method declarations. Can be used i.e. to search for 'native' methods.
+  -->
+  <!-- Spaces around 'native' are relevant for search -->
+  <heuristic-pattern pattern=" native "
+      type="METHOD_DECLARATION" description="native invokes" enabled="true" />
+
+  <!--
+  INVOKE:
+  Checks whether a certain method is invoked within the .apk or not
+  -->
+  <heuristic-pattern pattern="android/telephony/SmsManager->sendTextMessage"
+      type="INVOKE" description="Send text message" enabled="true" />
+
+</heuristic-patterns>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<slicing-patterns xmlns="http://iaik.tugraz.at/CryptoSlice"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://iaik.tugraz.at/Cryptoslice schema/slicing-patterns.xsd">
+
+  <!-- ## Backtracking patterns ## -->
+
+  <!--
+  parameters="*" applies the pattern on methods with overloaded parameters too. However, you may only track those
+  params with *, that are available in all overloads. Else, you would get an exception as the message signature
+  does not provide a trackable parameter at the given index (interestingPArameter).
+  -->
+  <backtracking-pattern enabled="true"
+      class="javax/crypto/spec/PBEKeySpec" method="&lt;init&gt;"
+      parameters="*"
+      description="PBEKeySpec: password" interestingParameter="0" />
+
+  <backtracking-pattern enabled="true"
+      class="javax/crypto/spec/PBEKeySpec" method="&lt;init&gt;"
+      parameters="*"
+      description="PBEKeySpec: salt" interestingParameter="1" />
+
+  <backtracking-pattern enabled="true"
+      class="javax/crypto/spec/PBEKeySpec" method="&lt;init&gt;"
+      parameters="*"
+      description="PBEKeySpec: iterationCount" interestingParameter="2" />
+
+  <backtracking-pattern enabled="true"
+      class="javax/crypto/spec/PBEKeySpec" method="&lt;init&gt;"
+      parameters="[C[BII"
+      description="PBEKeySpec: keyLength" interestingParameter="3" />
+
+  <!-- ## Forward-tracking patterns ## -->
+
+  <!--
+  Other ideas include: textVisiblePassword, textWebPassword, numberPassword, phone
+  The pattern //EditText[@inputType='textPassword'] does not match combinations, such as textNoSuggestions|textPassword
+  -->
+
+  <forwardtracking-pattern enabled="true" type="XPATH_QUERY"
+      pattern="//EditText[contains(@inputType, 'textPassword')]"
+      description="EditText XML fields with attribute inputType containing 'textPassword'" />
+
+  <forwardtracking-pattern enabled="true" type="XPATH_QUERY"
+      pattern="//EditText[@password='true']"
+      description="EditText XML fields with attribute password (deprecated)" />
+
+  <forwardtracking-pattern enabled="true" type="RESOURCE_ID"
+      pattern="@+id/etUsername1" description="XML field with given ID" />
+<!--
+  <forwardtracking-pattern enabled="true" type="OBJECT"
+      class="java/security/MessageDigest" method="getInstance" description="MessageDigest object" />
+-->
+</slicing-patterns>

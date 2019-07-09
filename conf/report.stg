@@ -1,0 +1,262 @@
+group cryptoslice;
+
+report(analysis, sliceAnalysis) ::= <<
+<?xml version="1.0" encoding="UTF-8" ?>
+<analysis>
+  $sliceAnalysis$
+</analysis>
+>>
+
+sliceAnalysis(cryptoRules) ::= <<
+<sliceAnalysis>
+  $cryptoRules:{it|$it$$\n$}$
+</sliceAnalysis>
+>>
+
+CryptoRule(ruleHead, abortMsg, searchIds) ::= <<
+<cryptoRule number="$ruleHead.number$" title="$ruleHead.title;format="xml"$">
+$if(!searchIds)$
+  <abort>$abortMsg$</abort>
+$else$
+  $searchIds$
+$endif$
+</cryptoRule>
+>>
+
+/*
+Cipher.getInstance() found but no cipher transformation -> abort
+Can happen when obfuscated strings are used.
+
+ivParameterSpec found but no static IV -> no staticIV block
+*/
+Rule1_CipherInstance(info, cipherConstants) ::= <<
+<cipherInstance>
+  <method>$info.method;format="xml"$</method>
+  <codeline>$info.codeline$</codeline>
+
+$if(!cipherConstants)$
+  <abort>No Cipher Transformation String found!</abort>
+$else$
+  $cipherConstants:{it|
+  <cipherConstant>
+    <cipher>$it.cipher;format="xml"$</cipher>
+    <symmetricCipherWithECB>$it.isECB$</symmetricCipherWithECB>
+  </cipherConstant>}$
+$endif$
+</cipherInstance>$\n$
+>>
+
+/*
+Cipher.Init() found but no IvParameterSpec object -> abortMsg
+
+ivParameterSpec found but no static IV -> no staticIV block
+*/
+Rule2_CipherInit(info, abortMsg, ivParameterSpec, staticIV) ::= <<
+<cipherInit>
+  <method>$info.method;format="xml"$</method>
+  <codeline>$info.codeline$</codeline>
+
+$if(abortMsg)$
+  <abort>$abortMsg$</abort>
+$else$
+  <ivParameterSpec>
+    $if(ivParameterSpec.random)$
+      <random>true</random>
+    $elseif(ivParameterSpec.secureRandom)$
+      <secureRandom>true</secureRandom>
+    $endif$
+
+    $staticIV:{it|
+    <staticIV>
+      <type>$it.type$</type>
+      <value>$it.value;format="xml"$</value>
+    </staticIV>}$
+  </ivParameterSpec>
+$endif$
+</cipherInit>$\n$
+>>
+
+/*
+SecretKeySpec found but no static key -> no key block
+Key is legitimate to be static for public-key cryptography -> withAsymmetricCipher = true
+*/
+Rule3_SecretKeySpec(info, key) ::= <<
+<secretKeySpec>
+  <method>$info.method;format="xml"$</method>
+  <codeline>$info.codeline$</codeline>
+
+  $key:{it|
+  <key withAsymmetricCipher="$it.isAsymmetric$">
+    <type>$it.type$</type>
+    <value>$it.value;format="xml"$</value>
+  </key>}$
+</secretKeySpec>$\n$
+>>
+
+/*
+PBEKeySpec found but no constant salt -> no constantSalt block
+*/
+Rule4_PBEKeySpecSalt(info, pbeKeySpec, constantSalt) ::= <<
+<pbeKeySpec>
+  <method>$info.method;format="xml"$</method>
+  <codeline>$info.codeline$</codeline>
+
+  $if(pbeKeySpec.random)$
+    <random>true</random>
+  $elseif(pbeKeySpec.secureRandom)$
+    <secureRandom>true</secureRandom>
+  $endif$
+
+  $constantSalt:{it|
+  <constantSalt>
+    <type>$it.type$</type>
+    <value>$it.value;format="xml"$</value>
+  </constantSalt>}$
+</pbeKeySpec>$\n$
+>>
+
+Rule5_PBEKeySpec(info, iterations) ::= <<
+<pbeKeySpec>
+  <method>$info.method;format="xml"$</method>
+  <codeline>$info.codeline$</codeline>
+
+  <iterations min="$iterations.min$">$iterations.pbe$</iterations>
+</pbeKeySpec>$\n$
+>>
+
+/*
+SecureRandom found but no static seed -> no staticSeed block
+*/
+Rule6_SecureRandom(info, staticSeed)  ::= <<
+<secureRandom>
+  <method>$info.method;format="xml"$</method>
+  <codeline>$info.codeline$</codeline>
+
+  $staticSeed:{it|
+  <staticSeed>
+    <type>$it.type$</type>
+    <value>$it.value;format="xml"$</value>
+  </staticSeed>}$
+</secureRandom>$\n$
+>>
+
+/*
+MessageDigest found but no MessageDigest->digest() -> abortMsg
+*/
+Rule7_MessageDigest(info, abortMsg, messageDigestPaths) ::= <<
+<messageDigest>
+  <method>$info.method;format="xml"$</method>
+  <codeline>$info.codeline$</codeline>
+
+$if(abortMsg)$
+  <abort>$abortMsg$</abort>
+$else$
+  $messageDigestPaths:{it|$it$$\n$}$
+$endif$
+</messageDigest>$\n$
+>>
+
+Rule7_MessageDigestPath(element) ::= <<
+<messageDigestPath>
+  $element:{it|
+  <pathElement>$it;format="xml"$</pathElement>}$
+</messageDigestPath>
+>>
+
+Rule8_PasswordField(info, status) ::= <<
+<passwordField>
+  <fieldName>$info.pwField;format="xml"$</fieldName>
+  <fieldValue>$info.pwValue;format="xml"$</fieldValue>
+  <class>$info.class;format="xml"$</class>
+  <codeline>$info.codeline$</codeline>
+
+  <foundLog>$status.foundLog$</foundLog>
+  <foundOutputStream>$status.foundOutputStream$</foundOutputStream>
+  <foundCrypto>$status.foundCrypto$</foundCrypto>
+</passwordField>$\n$
+>>
+
+/*
+PBEKeySpec found but no constant key -> no constantKey block
+*/
+Rule9_PBEKeySpecKey(info, pbeKeySpec, constantKey) ::= <<
+<pbeKeySpec>
+  <method>$info.method;format="xml"$</method>
+  <codeline>$info.codeline$</codeline>
+
+  $if(pbeKeySpec.random)$
+    <random>true</random>
+  $elseif(pbeKeySpec.secureRandom)$
+    <secureRandom>true</secureRandom>
+  $endif$
+
+  $constantKey:{it|
+  <constantKey>
+    <type>$it.type$</type>
+    <value>$it.value;format="xml"$</value>
+  </constantKey>}$
+</pbeKeySpec>$\n$
+>>
+
+Rule10_RSAKeySpec(info, constantKey) ::= <<
+<rsaKeySpec>
+  <method>$info.method;format="xml"$</method>
+  <codeline>$info.codeline$</codeline>
+
+  $constantKey:{it|
+  <constantKey>
+    <type>$it.type$</type>
+    <value>$it.value;format="xml"$</value>
+  </constantKey>}$
+</rsaKeySpec>$\n$
+>>
+
+Rule11_KeyStore(info, constantPassword) ::= <<
+<keyStore>
+  <method>$info.method;format="xml"$</method>
+  <codeline>$info.codeline$</codeline>
+
+$if(constantPassword)$
+  <password>$constantPassword$</password>
+$endif$
+</keyStore>$\n$
+>>
+
+Rule12_BasicAuth(info, abortMsg, userPw, user, pw) ::= <<
+<basicAuth>
+  <method>$info.method;format="xml"$</method>
+  <codeline>$info.codeline$</codeline>
+  <type>$info.type;format="xml"$</type>
+
+$if(abortMsg)$
+  <abort>$abortMsg$</abort>
+$else$
+  $userPw:{it|
+  <possibleUserPwCombination>$it;format="xml"$</possibleUserPwCombination>}$
+  $user:{it|
+  <possibleUser>$it;format="xml"$</possibleUser>}$
+  $pw:{it|
+  <possiblePw>$it;format="xml"$</possiblePw>}$
+$endif$
+</basicAuth>$\n$
+>>
+
+Rule13_CustomTrustManager(info, invokedFrom, trustStatus) ::= <<
+<certValidator>
+$if(info.class)$
+  <implementerClass>$info.class;format="xml"$</implementerClass>
+$endif$
+  <type>$info.type;format="xml"$</type>
+
+  <invokedFrom>
+    $invokedFrom:{it|
+    <reference>
+      <class>$it.class;format="xml"$</class>
+      <method>$it.method;format="xml"$</method>
+      <codeline>$it.codeline$</codeline>
+    </reference>}$
+  </invokedFrom>
+
+  <trustStatus>$if(trustStatus)$$trustStatus$$else$unknown$endif$</trustStatus>
+</certValidator>$\n$
+>>
