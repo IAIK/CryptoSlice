@@ -37,3 +37,4 @@ target
 reports/*
 test_*
 apps_
+bytecode

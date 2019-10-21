@@ -61,6 +61,7 @@ public class Analysis {
     List<Step> analysisSteps = new ArrayList<>();
     analysisSteps.add(new HeuristicSearchStep(ConfigHandler.getInstance().getBooleanConfigValue(ConfigKeys.ANALYSIS_DO_HEURISTIC)));
     analysisSteps.add(new URLScanStep(ConfigHandler.getInstance().getBooleanConfigValue(ConfigKeys.ANALYSIS_DO_URLSCAN)));
+    analysisSteps.add(new SecretScanStep(ConfigHandler.getInstance().getBooleanConfigValue(ConfigKeys.ANALYSIS_DO_SECRETSCAN)));
     analysisSteps.add(new NativeCodeStep(true));
     analysisSteps.add(new PermissionCheckStep(ConfigHandler.getInstance().getBooleanConfigValue(ConfigKeys.ANALYSIS_MATCH_APICALLS)));
     analysisSteps.add(new SlicingStep(ConfigHandler.getInstance().getBooleanConfigValue(ConfigKeys.ANALYSIS_DO_SLICING)));

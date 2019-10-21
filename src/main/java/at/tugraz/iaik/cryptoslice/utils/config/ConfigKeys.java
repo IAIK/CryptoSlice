@@ -42,6 +42,10 @@ public enum ConfigKeys {
    */
   ANALYSIS_DO_URLSCAN("analysis.urlscan.enable", false),
   /**
+   * Perform a scan for secrets.
+   */
+  ANALYSIS_DO_SECRETSCAN("analysis.secretscan.enable", false),
+  /**
    * Whether to extract APK content.
    */
   ANALYSIS_EXTRACT_APK("analysis.extractapk.enable", false),
