@@ -12,6 +12,7 @@ import brut.androlib.err.CantFindFrameworkResException;
 import brut.androlib.err.InFileNotFoundException;
 import brut.androlib.err.OutDirExistsException;
 import brut.directory.DirectoryException;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,6 +76,19 @@ public class DecompileApkStep extends Step {
         /*AndrolibResources res = new AndrolibResources();
         ExtFile apkFile = new ExtFile(apk);
         res.decodeManifest(res.getResTable(apkFile, true), apkFile, destination);*/
+
+        // Merge the classes of multiple classes.dex files into one smali folder
+        if (decoder.hasMultipleSources()) {
+          File[] smaliDirs = destination.listFiles((d, name) -> name.startsWith("smali_"));
+          for (File smaliDir : smaliDirs) {
+            File destDir = new File(destination, "smali");
+            boolean rename = smaliDir.renameTo(destDir);
+            if (!rename) {
+              FileUtils.copyDirectory(smaliDir, destDir, true);
+              FileUtils.deleteDirectory(smaliDir);
+            }
+          }
+        }
 
       } catch (OutDirExistsException ex) {
         LOGGER.error("Destination directory (" + destination.getAbsolutePath() + ") " + ") already exists.");
