@@ -9,18 +9,18 @@
   <version>1.0-SNAPSHOT</version>
 
   <properties>
-    <java.version>1.8</java.version>
+    <java.version>11</java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <commons-io.version>2.6</commons-io.version>
     <guava.version>27.0.1-jre</guava.version>
-    <httpcore.version>4.4.11</httpcore.version>
-    <ST4.version>4.1</ST4.version>
+    <httpcore.version>4.4.12</httpcore.version>
+    <ST4.version>4.2</ST4.version>
     <largetext.version>0.2.0</largetext.version>
 
     <!-- Logging -->
     <logback.version>1.2.3</logback.version>
-    <slf4j.version>1.7.26</slf4j.version>
+    <slf4j.version>1.7.29</slf4j.version>
 
     <!-- Maven plugins -->
     <maven-assembly-plugin.version>3.1.1</maven-assembly-plugin.version>
