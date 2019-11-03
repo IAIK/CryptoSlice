@@ -660,6 +660,17 @@ public class SlicerBackward extends Slicer {
           }
         }
 
+        if (f.isStatic()) {
+          // the value could also have been assigned to a static field in the field declaration
+          Constant c = new Constant(f.getCodeLine(), ctt.getFuzzyLevel(), ctt.getPath(), searchId);
+          if (c.getValue() != null) { // if null, something gets assigned in <clinit>
+            criterion.addFoundConstant(searchId, c);
+            currentSliceTree.addConstant(c, null, ctt.getPreviousSliceNode(), ctt.getPreviousRegister());
+            LOGGER.trace(" ...added to result list because it is static with value!");
+            // no return here because there could be other assignments via XPUT
+          }
+        }
+
         if (isFinalAndStatic)
           LOGGER.trace(" ..found a static and final constant without any assigned value, need to parse <clinit>!");
         else

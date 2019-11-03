@@ -72,7 +72,7 @@ public class Rule5 extends CryptoRule {
       for (Constant constant : constants) {
         if ( ( (constant.getConstantType() == Constant.ConstantType.LOCAL_ANONYMOUS_CONSTANT &&
             constant.getVarTypeDescription().startsWith("const")) ||
-            (constant.getConstantType() == Constant.ConstantType.LOCAL_VARIABLE &&
+            ((constant.getConstantType() == Constant.ConstantType.LOCAL_VARIABLE || constant.getConstantType() == Constant.ConstantType.FIELD_CONSTANT) &&
             constant.getVarTypeDescription().equals("int")) ) &&
             (constant.getValue() != null && !constant.getValue().equals("0")) &&
             (iterationCount == null || (constant.getFuzzyLevel() <= iterationCount.getFuzzyLevel())) ) {
