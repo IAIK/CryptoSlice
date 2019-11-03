@@ -10,7 +10,7 @@ It represents our solution to:
 - Track the data flow of user input in forward direction and determine how it is processed. 
 
 Backward slicing enables us to evaluate the values of parameters passed to cryptographic and security-related APIs: 
-> [Paper](https://pure.tugraz.at/ws/portalfiles/portal/23858147): "A Comparative Study of Misapplied Cryptoin Android and iOS Applications" by Johannes Feichtner,
+> [Paper](https://pure.tugraz.at/ws/portalfiles/portal/23858147): "A Comparative Study of Misapplied Crypto in Android and iOS Applications" by Johannes Feichtner,
 presented at SECRYPT 2019.
 
 Forward slicing can be used to follow the trace of a password right from the point where it enters an application:
